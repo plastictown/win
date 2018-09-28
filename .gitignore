@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+Debug
+Release
+.vs
+*.ncb
+*.pdb
+*.filters
+*.db
+*.opendb
+*.user
