@@ -7,11 +7,12 @@
 
 using namespace std;
 
-string StringProcessor::toAnsi(const wstring& const wstr)try
+string StringProcessor::toAnsi(const wstring& const wstr)
 {
   const size_t ansi_len = wstr.length() + 1;
-  PCHAR buf = new CHAR[ansi_len];
-  SecureZeroMemory(buf, ansi_len);
+  PCHAR buf = (PCHAR)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, ansi_len * sizeof(CHAR));
+  if (buf == NULL)
+    return string();
   BOOL usedDefaultChar{ FALSE };
 
   int rv = WideCharToMultiByte(
@@ -26,20 +27,16 @@ string StringProcessor::toAnsi(const wstring& const wstr)try
 
   if (0 == rv)
   {
-    delete[] buf;
+    HeapFree(GetProcessHeap(), NULL, buf);
     buf = nullptr;
     return string();
   }
   string ansiString(buf);
-  delete[] buf;
+  HeapFree(GetProcessHeap(), NULL, buf);
   buf = nullptr;
   return ansiString;
 }
-catch (const std::exception& e)
-{
-  errorOutA(e.what());
-  return string();
-}
+
 
 void StringProcessor::errorOutA(const char* err)
 {
@@ -47,12 +44,14 @@ void StringProcessor::errorOutA(const char* err)
   fwrite(err, sizeof(char), len, stderr);
 }
 
-wstring StringProcessor::toUnicode(const string& const str)try
+wstring StringProcessor::toUnicode(const string& const str)
 {
   const size_t uc_len = str.length() + 1;
-  PWCHAR buf = new WCHAR[uc_len];
-  SecureZeroMemory(buf, uc_len*sizeof(WCHAR));
-
+  //PWCHAR buf = new WCHAR[uc_len];
+  //SecureZeroMemory(buf, uc_len*sizeof(WCHAR));
+  PWCHAR buf = (PWCHAR)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, uc_len * sizeof(WCHAR));
+  if (buf == NULL)
+    return wstring();
   int rv = MultiByteToWideChar(
     CP_ACP,
     NULL,
@@ -63,18 +62,13 @@ wstring StringProcessor::toUnicode(const string& const str)try
 
   if (0 == rv)
   {
-    delete[] buf;
+    HeapFree(GetProcessHeap(), NULL, buf);
     buf = nullptr;
     return wstring();
   }
 
   wstring uc_string(buf);
-  delete[] buf;
+  HeapFree(GetProcessHeap(), NULL, buf);
   buf = nullptr;
   return uc_string;
-}
-catch (const std::exception& e)
-{
-  errorOutA(e.what());
-  return wstring();
 }

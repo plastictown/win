@@ -4,12 +4,14 @@
 #include <tchar.h>
 #include <locale>
 #include <StringProcessor.hpp>
+#include <ErrorHandler.hpp>
 
 using namespace std;
 
 int _tmain(int argc, TCHAR** argv)
 {
   setlocale(LC_ALL, "rus");
+  ErrorHandler::setConsoleReportMode();
 
   wstring wstr(L"Русский текст");
   //to ansi

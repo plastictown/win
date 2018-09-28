@@ -3,6 +3,14 @@
 #ifndef __STRING_PROCESSOR_HPP__
 #define __STRING_PROCESSOR_HPP__
 
+#if defined UNICODE
+#define tcout wcout
+#define tcerr wcerr
+#else
+define tcout cout
+#define tcerr cerr
+#endif
+
 #include <string>
 using namespace std;
 
